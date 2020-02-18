@@ -13,12 +13,12 @@ from param import *
 
 S_LEN = 10
 EP_LENGTH = 50
-TTL = 64
+TTL = args.ttl
 
 #MODEL_NAME = "ppo2_base_geant"
 #MODEL_NAME_NEW = "ppo2_base_geant2"
 #TENSORBOARD_LOG_DIR = "./tensorlog_base"
-TENSORBOARD_LOG_DIR = os.path.join(args.tb_log_dir, "base")
+TENSORBOARD_LOG_DIR = args.tb_log_dir + '_base'
 
 if args.topology == "nsf":
     # NSFNet topology
@@ -99,7 +99,8 @@ def main():
 
     # save model
     #model.save(MODEL_NAME_NEW)
-    model.save(args.model_name)
+    model_name_new = str(args.model_name) + '_base' + '_' + str(args.topology)
+    model.save(model_name_new)
 
     obs = net_env.reset()
     for i in range(1000):
