@@ -7,7 +7,7 @@ from stable_baselines import PPO2
 from stable_baselines.common.evaluation import evaluate_policy
 
 MODEL_NAME = "ppo2_alt_geant"
-MODEL_NAME_BASE = "ppo2_base_geant2"
+MODEL_NAME_BASE = "ppo2_base_geant"
 S_LEN = 1
 EP_LENGTH = 1
 MAX_HOP = 500

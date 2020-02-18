@@ -3,7 +3,6 @@ import random
 import copy
 import gym
 from gym import spaces
-#from gurobipy import *
 
 MISS_PENALTY = 10
 
@@ -33,7 +32,7 @@ class basicEnv(gym.Env):
         # Define action space
         self.action_space = spaces.Box(
                 low=-1.0,high=1.0,shape=(num_v*num_e,))
-        #print(self.action_space.low,self.action_space.high)
+
         # Define observation space
         self.observation_space = spaces.Box(
                 low=0.0,high=np.float32(1e6),shape=(num_v,num_v,k))
@@ -144,47 +143,22 @@ class basicEnv(gym.Env):
                         f_prev = f_t
                         t += 1
                     arrived = f_t[dst]
-                    #if arrived > 0.1:
-                    #    k = demand_sd/arrived
-                    #else:
-                    #    k = demand_sd*10
-                    #    punish += (0.1-arrived)*10
-                    total_arrived += arrived
-                    #utilization += k*util_flow/(self.ttl+1)
-                    utilization += util_flow/(self.ttl+1)
 
-        
-        """        
-        node_traffic = np.zeros((self.num_v,self.num_v))
-        for dst in range(self.num_v):
-            eigen_val, eigen_vec = np.linalg.eig(split_mat[dst,:,:].T)
-            ind = np.argwhere(eigen_val==1+0j)
-            if len(ind) == 0:
-                print("No eigenvalue 1")
-                raise NotImplementedError
-            elif len(ind) > 1:
-                print("Several eigenvalue 1")
-                raise NotImplementedError
-            else:
-                node_traffic[dst] = eigen_vec[ind[0,0]]
-            """
+                    total_arrived += arrived
+
+                    utilization += util_flow/(self.ttl+1)
 
         mlu = np.max(utilization)
         util_cap_dif = np.clip(utilization-self.capacity,0,mlu)
 
-        #reward = - np.log10(mlu/np.sum(demand)) - punish/(self.num_v*self.sparsity) - np.log10(np.max(util_cap_dif))
         reward =  - (mlu+7*np.max(util_cap_dif))/np.sum(demand) + self.miss_penalty * (total_arrived - self.flow_num)/self.flow_num
-        #reward = - 5 * (mlu/baseline_mlu - 1)
         print("mlu {}".format(mlu))
         print("arrived {0} utilexd {1}".format(total_arrived,np.max(util_cap_dif)))
-        #print("total_arrived {0}  total_arrived_base {1}".format(total_arrived,total_arrived_base))
         print("[Epoch {0}][Reward {1}]".format(self.current_step,reward))
         print("============================================================\n")
         return reward
 
     def spread_traffic_step(self,src,dst,split_mat,F_t_minus_1):
-        #src_onehot = np.zeros(self.num_v)
-        #src_onehot[src] = 1.0
         util_plus = np.zeros(self.num_e)
         for node in range(self.num_v):
             for neighbor,link in self.graph[node].items():
@@ -196,72 +170,3 @@ class basicEnv(gym.Env):
     def spread_traffic_flowt0(self,src,dst,split_mat,f_t_minus_1):
         f_t = np.matmul(split_mat.T,f_t_minus_1)
         return f_t
-
-"""
-    def spread_traffic(self, src, dst, link_weight,flag):
-
-        if src == dst:
-            #print("src:{0} dst:{1} split:{2}".format(src,dst,np.zeros(self.num_e)))
-            self.traffic[(src,dst)]=(np.zeros(self.num_e),1.0)
-            return np.zeros(self.num_e), 1.0
-        elif self.exceed_max_search:
-            #self.traffic[(src,dst)]=(np.zeros(self.num_e),0.0)
-            return np.zeros(self.num_e), 0.0
-        else:
-            self.hop_count += 1
-            total_weight = 0.0
-            util = np.zeros(self.num_e)
-            arrived_flow = 0.0
-            #prev1 = copy.deepcopy(prev)
-            #prev1.append(src)
-            for neighbor, link in self.graph[src].items():
-                if(self.hop_count>=self.max_hop):
-                    self.exceed_max_search = True
-                if self.altitude[dst,neighbor] <= self.altitude[dst,src]:
-                    continue
-                split_portion = np.exp(-self.gamma*link_weight[link])
-                total_weight += split_portion
-                if (neighbor,dst) in self.traffic:
-                    util_plus, arrived_plus = self.traffic[(neighbor,dst)]
-                else:
-                    util_plus, arrived_plus = self.spread_traffic(neighbor, dst, link_weight,flag)
-                util[link] += split_portion
-                util += split_portion * util_plus
-                arrived_flow += split_portion * arrived_plus
-            if total_weight == 0:
-                # self.exceed_max_search = True
-                self.traffic[(src,dst)]=(np.zeros(self.num_e),0.0)
-                if flag:
-                    self.no_where_to_go += 1
-                return np.zeros(self.num_e), 0.0
-            util = util/total_weight
-            arrived_flow = arrived_flow/total_weight
-            #print("src:{0} dst:{1} split:{2}".format(src,dst,util))
-            if (src,dst) not in self.traffic:
-                self.traffic[(src,dst)]=(util,arrived_flow)
-            #if (util-1.0).any() > 0:
-            #    print([src,dst])
-
-            return util, arrived_flow
-
-def naive_altitude(num_v, graph):
-    num_hop = num_v*np.ones((num_v,num_v))
-    for i in range(num_v):
-        num_hop[i,i] = 0
-    while True:
-        flag = True
-        for dst in range(num_v):
-            for src in range(num_v):
-                for neighbor in graph[src]:
-                    if (num_hop[dst][neighbor] + 1) < num_hop[dst][src]:
-                        num_hop[dst][src] = num_hop[dst][neighbor] + 1
-                        flag = False
-                        #print("dst:{0} src:{1} neighbor:{2} hop:{3}".format(dst,src,neighbor,num_hop[dst][src]))
-        if flag:
-            break
-    for i in range(num_v):
-        num_hop[i,i] = -1
-    alt = num_v *np.ones_like(num_hop)-num_hop
-    return alt
-
-"""

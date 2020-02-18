@@ -36,7 +36,7 @@ CAPACITY = [110,140,110,110,110,140,110,110,110,140,
             140,140,110,140,140,140,140,110,110,140,
             140,110,140,110,140,140,140]
 
-
+# mini test topology
 #NUM_VERTICE = 6
 #NUM_EDGE = 9
 #GRAPH = [{1:1,5:2},{0:1,5:3,3:5,2:4},{1:4,3:6},{2:6,1:5,5:7,4:8},{3:8,5:0},{0:2,1:3,3:7,4:0}]
@@ -48,7 +48,7 @@ def main():
     net_env = env.ALTEnv(NUM_VERTICE, NUM_EDGE, GRAPH, CAPACITY,
                            k=S_LEN, ep_length=EP_LENGTH, max_hop=MAX_HOP,dm_seq_len=20)
 
-    # check environment
+    ## check environment
     #check_env(net_env)
     if not os.path.exists(TENSORBOARD_LOG_DIR):
         os.makedirs(TENSORBOARD_LOG_DIR)
