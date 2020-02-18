@@ -1,1 +1,6 @@
-"# routing-optimization-with-RL" 
+# routing-optimization-with-RL"
+## Prerequisites
+- Python
+- Tensorflow
+- CPU or NVIDIA GPU + CUDA CuDNN
+- 
