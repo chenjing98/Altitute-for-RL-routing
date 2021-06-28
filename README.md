@@ -1,5 +1,7 @@
 # routing-optimization-with-RL
 
+*Jing Chen, Zili Meng, Mingwei Xu. Always Heading for the Peak: Learning to Route with Domain Knowledge. In Proceedings of IEEE INFOCOM 2020 (Poster).*
+
 ## Prerequisites
 - Python
 - Tensorflow
