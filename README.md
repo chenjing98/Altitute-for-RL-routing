@@ -1,4 +1,4 @@
-# routing-optimization-with-RL
+# Altitute for Reinforcement Learning based Routing Optimization
 
 *Jing Chen, Zili Meng, Mingwei Xu. Always Heading for the Peak: Learning to Route with Domain Knowledge. In Proceedings of IEEE INFOCOM 2020 (Poster).*
 
